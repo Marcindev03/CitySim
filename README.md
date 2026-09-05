@@ -1,5 +1,7 @@
 # CitySim
 
+[🇵🇱 Wersja polska](README.pl.md)
+
 A small grid-based vehicle traffic simulation. Built as a 30-day C# learning challenge, 5 minutes a day.
 
 ## Run

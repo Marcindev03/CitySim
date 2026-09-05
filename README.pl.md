@@ -1,5 +1,7 @@
 # CitySim (PL)
 
+[🇬🇧 English version](README.md)
+
 Mała symulacja ruchu pojazdów na siatce. Powstała jako 30-dniowy challenge nauki C#, po 5 minut dziennie.
 
 ## Uruchomienie

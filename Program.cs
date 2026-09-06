@@ -41,6 +41,8 @@ bool IsRedLight(Position p, List<TrafficLight> lights)
     return lights.Any(l => l.Color == TrafficLightColor.Red && l.Position == p);
 }
 
+Dictionary<string, Position> before = vehicles.ToDictionary(v => v.Id, v => v.Position);
+
 Stopwatch sw = Stopwatch.StartNew();
 // Tick
 foreach (Vehicle vehicle in vehicles)
@@ -71,8 +73,13 @@ Console.WriteLine($"Tick took: {sw.Elapsed.TotalMilliseconds:F2} ms");
 
 Debug.Assert(occupiedPositions.Count == vehicles.Count, "Collision! Two vehicles on the same field.");
 
+int movedByLinq = vehicles.Count(v => v.Position != before[v.Id]);
+int waitingByLinq = vehicles.Count(v => v.Position == before[v.Id] && v.Position != v.Destination);
+int arrivedByLinq = vehicles.Count(v => v.Position == before[v.Id] && v.Position == v.Destination);
 
-Console.WriteLine($"Moved: {moved}, Waiting: {waiting}, Arrived: {arrived}");
+Console.WriteLine($"Moved (LINQ): {movedByLinq}, Moved (counter): {moved}");
+Console.WriteLine($"Waiting (LINQ): {waitingByLinq}, Waiting (counter): {waiting}");
+Console.WriteLine($"Arrived (LINQ): {arrivedByLinq}, Arrived (counter): {arrived}");
 
 bool saveJson = args.Contains("--save-json");
 if (saveJson)
@@ -91,7 +98,13 @@ enum Direction
 }
 record Position(int X, int Y);
 
-class Vehicle
+interface IMovable
+{
+    void Move(Direction direction);
+    void MoveTowardsDestination();
+}
+
+class Vehicle : IMovable
 {
     public string Id
     {
@@ -103,7 +116,7 @@ class Vehicle
     }
     public Position? Destination
     {
-        get; set;
+        get; init;
     }
 
     public Vehicle(string id, Position position)
